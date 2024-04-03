@@ -30,11 +30,28 @@ async function run() {
     const roomsCollection = client.db('aircncDb').collection('rooms')
     const bookingsCollection = client.db('aircncDb').collection('bookings')
 
+
+    //save user email and role into the mongodb userCollection
+    app.put('/users/:email',async(req,res)=>{
+      const email = req.params.email
+      const user = req.body
+      const query = {email: email }
+      const options = {upsert : true}
+      const updateDoc = {
+        $set : user
+      }
+      const result = await usersCollection.updateOne(query,updateDoc,options)
+      console.log(result)
+      res.send(result)
+    })  
+
+
     // Send a ping to confirm a successful connection
     await client.db('admin').command({ ping: 1 })
     console.log(
       'Pinged your deployment. You successfully connected to MongoDB!'
     )
+
   } finally {
     // Ensures that the client will close when you finish/error
     // await client.close();
