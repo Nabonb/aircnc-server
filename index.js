@@ -45,6 +45,14 @@ async function run() {
       res.send(result)
     })  
 
+    //get user with email
+    app.get('/users/:email',async(req,res)=>{
+      const email = req.params.email
+      const query = {email:email}
+      const result = await usersCollection.findOne(query)
+      res.send(result)
+    })
+
     //adding rooms into the database
     app.post('/rooms',async(req,res)=>{
       const roomData = req.body;
