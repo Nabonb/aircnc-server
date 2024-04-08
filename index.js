@@ -65,11 +65,19 @@ async function run() {
       const allRooms = await roomsCollection.find().toArray()
       res.send(allRooms)
     })
+    
     // Get a Single Room
     app.get('/room/:id',async(req,res)=>{
       const id = req.params.id
       const query = {_id: new ObjectId(id)}
       const result = await roomsCollection.findOne(query)
+      res.send(result)
+    })
+
+    //For booking a single room
+    app.post('/bookings',async(req,res)=>{
+      const booking = req.body;
+      const result = await bookingsCollection.insertOne(booking)
       res.send(result)
     })
 
