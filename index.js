@@ -73,6 +73,15 @@ async function run() {
       const result = await roomsCollection.findOne(query)
       res.send(result)
     })
+
+    //Get rooms (using host email) which host added
+    app.get('/rooms/:email',async(req,res)=>{
+      const email = req.params.email
+      const query = {'host.email':email}
+      const result = await roomsCollection.find(query).toArray()
+      res.send(result)
+
+    })
     
     //update room Booking status
     app.patch('/rooms/status/:id',async(req,res)=>{
@@ -86,6 +95,14 @@ async function run() {
       }
       const update = await roomsCollection.updateOne(query,updateDoc)
       res.send(update)
+    })
+
+    // Delete a single room
+    app.delete('/rooms/:id',async(req,res)=>{
+      const id = req.params.id
+      const query = {_id: new ObjectId(id)}
+      const result = await roomsCollection.deleteOne(query)
+      res.send(result)
     })
 
     //For booking a single room
