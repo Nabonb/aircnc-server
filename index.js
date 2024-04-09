@@ -73,11 +73,44 @@ async function run() {
       const result = await roomsCollection.findOne(query)
       res.send(result)
     })
+    
+    //update room Booking status
+    app.patch('/rooms/status/:id',async(req,res)=>{
+      const id = req.params.id
+      const status = req.body.status
+      const query = {_id:new ObjectId(id)}
+      const updateDoc ={
+        $set:{
+          booked:status,
+        },
+      }
+      const update = await roomsCollection.updateOne(query,updateDoc)
+      res.send(update)
+    })
 
     //For booking a single room
     app.post('/bookings',async(req,res)=>{
       const booking = req.body;
       const result = await bookingsCollection.insertOne(booking)
+      res.send(result)
+    })
+
+    //Getting all the bookings through email
+    app.get('/bookings',async(req,res)=>{
+      const email= req.query.email
+      if(!email){
+        res.send([])
+      }
+      const query = {'guest.email':email}
+      const result = await bookingsCollection.find(query).toArray()
+      res.send(result)
+    })
+
+    //Delete a single booking using id
+    app.delete('/bookings/:id',async(req,res)=>{
+      const id = req.params.id
+      const query = {_id:new ObjectId(id)}
+      const result = await bookingsCollection.deleteOne(query)
       res.send(result)
     })
 
