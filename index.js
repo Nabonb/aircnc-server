@@ -2,6 +2,7 @@ const express = require('express')
 const app = express()
 const cors = require('cors')
 const morgan = require('morgan')
+const jwt = require('jsonwebtoken')
 require('dotenv').config()
 const port = process.env.PORT || 5000
 
@@ -32,6 +33,14 @@ async function run() {
     const roomsCollection = client.db('aircncDb').collection('rooms')
     const bookingsCollection = client.db('aircncDb').collection('bookings')
 
+    //create jwt token
+    app.post('/jwt',(req,res)=>{
+      const email = req.body
+      console.log(email)
+      const token = jwt.sign(email,process.env.ACCESS_TOKEN_SECRET,{expiresIn:"1h"})
+      console.log(token)
+      res.send({token})
+    })
 
     //save user email and role into the mongodb userCollection
     app.put('/users/:email',async(req,res)=>{
