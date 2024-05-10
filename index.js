@@ -5,6 +5,7 @@ const morgan = require('morgan')
 const jwt = require('jsonwebtoken')
 require('dotenv').config()
 const port = process.env.PORT || 5000
+const stripe = require("stripe")(process.env.PAYMENT_SECRET_KEY);
 
 // middleware
 const corsOptions = {
@@ -50,7 +51,25 @@ async function run() {
     const roomsCollection = client.db('aircncDb').collection('rooms')
     const bookingsCollection = client.db('aircncDb').collection('bookings')
 
-    //create jwt token
+    //generate client secret 
+    app.post('/create-payment-intent',verifyJwt,async(req,res)=>{
+      const {price} = req.body
+      console.log(price)
+      if(price){
+        const amount = parseFloat(price) * 100 // converting dollar in cents
+        const paymentIntent = await stripe.paymentIntents.create({
+          amount: amount,
+          currency: "usd",
+          payment_method_types: ['card'],
+        })
+        res.send({
+          clientSecret: paymentIntent.client_secret,
+        });
+      }
+     
+    })
+
+    //generate jwt token
     app.post('/jwt',(req,res)=>{
       const email = req.body
       console.log(email)
