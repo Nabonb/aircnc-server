@@ -130,6 +130,20 @@ async function run() {
       res.send(result)
     })
 
+    //Update a room in database
+    app.put('/rooms/:id',verifyJwt, async (req, res) => {
+      const room = req.body
+      console.log(room)
+
+      const filter = { _id: new ObjectId(req.params.id) }
+      const options = { upsert: true }
+      const updateDoc = {
+        $set: room,
+      }
+      const result = await roomsCollection.updateOne(filter, updateDoc, options)
+      res.send(result)
+    })
+
     // Get All Rooms
     app.get('/rooms',async(req,res)=>{
       const allRooms = await roomsCollection.find().toArray()
